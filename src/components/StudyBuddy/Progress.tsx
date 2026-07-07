@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
-import { Check, CheckIcon, LoaderCircle, SearchCheck } from "lucide-react";
+import { Check, LoaderCircle } from "lucide-react";
 
 export function Progress({
   steps,
 }: {
   steps: {
     description: string;
-    status: "complete" | "done";
+    status: "complete" | "done" | "pending";
     updates: string[];
   }[];
 }) {

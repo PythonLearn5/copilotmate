@@ -219,18 +219,16 @@ export default function ExpenseTracker() {
       },
     ],
     handler: ({ name, amount, date }) => {
-      const parsedAmount = parseFloat(amount); // Convert amount to number
-      const parsedDate = String(date); // Ensure date is a string
-      const parsedName = String(name); // Ensure name is a string
+      const parsedAmount = Number(amount);
 
       if (!isNaN(parsedAmount)) {
         setExpenses((prevExpenses) => [
           ...prevExpenses,
           {
             id: prevExpenses.length + 1,
-            name: parsedName,
+            name,
             amount: parsedAmount,
-            date: parsedDate,
+            date,
           },
         ]);
       } else {

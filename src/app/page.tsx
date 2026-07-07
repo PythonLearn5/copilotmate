@@ -1,5 +1,5 @@
 
-import FAQ from "@/components/Home/Faq";
+import FAQ from "@/components/Home/FAQ";
 import Features from "@/components/Home/Features";
 import FeedbackSection from "@/components/Home/Feedback";
 import Hero from "@/components/Home/Hero";

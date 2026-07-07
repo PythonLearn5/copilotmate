@@ -5,7 +5,7 @@ import { placeholders } from "@/data";
 import Link from "next/link";
 
 const Header = () => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {};
+  const handleChange = () => {};
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("submitted");

@@ -14,10 +14,23 @@ class Step(TypedDict):
     description: str
     status: str
     type: str
-    description: str
     search_result: Optional[str]
     result: Optional[str]
     updates: Optional[List[str]]
+
+class Reference(TypedDict):
+    """
+    Represents a source reference in the final answer.
+    """
+    title: str
+    url: str
+
+class Answer(TypedDict):
+    """
+    Represents the structured answer rendered by the frontend.
+    """
+    markdown: str
+    references: List[Reference]
 
 class AgentState(MessagesState):
     """
@@ -25,4 +38,4 @@ class AgentState(MessagesState):
     It is a subclass of the MessagesState class from langgraph.
     """
     steps: List[Step]
-    answer: Optional[str]
+    answer: Optional[Answer]

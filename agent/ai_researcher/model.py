@@ -1,23 +1,16 @@
-"""
-This module provides a function to get a model based on the configuration.
-"""
+"""Model configuration for the LangGraph research agent."""
+
 import os
-import getpass
 from langchain_groq import ChatGroq
 
 
 def get_model():
-    """
-    Get a model based on the environment variable.
-    """
-    
-    if "GROQ_API_KEY" not in os.environ:
-        os.environ["GROQ_API_KEY"] = getpass.getpass("Enter your Groq API key: ")
-    model = ChatGroq(
-        model="llama3-groq-8b-8192-tool-use-preview",
+    """Build the Groq chat model used by each graph node."""
+
+    if not os.environ.get("GROQ_API_KEY"):
+        raise RuntimeError("GROQ_API_KEY is required to run the StudyBuddy agent.")
+
+    return ChatGroq(
+        model=os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile"),
         temperature=0,
     )
-    
-    if model:
-        return model
-    raise ValueError("Invalid model specified")

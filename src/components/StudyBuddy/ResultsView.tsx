@@ -8,16 +8,35 @@ import { useCoAgent } from "@copilotkit/react-core";
 import { Progress } from "./Progress";
 import { AnswerMarkdown } from "./AnswerMarkdown";
 
+type ResearchStep = {
+  description?: string;
+  status?: "complete" | "done" | "pending";
+  updates?: string[];
+};
+
+type ResearchReference = {
+  url: string;
+  title: string;
+};
+
+type ResearchAgentState = {
+  steps?: ResearchStep[];
+  answer?: {
+    markdown?: string;
+    references?: ResearchReference[];
+  };
+};
+
 export function ResultsView() {
   const { researchQuery } = useResearchContext();
-  const { state: agentState } = useCoAgent({
+  const { state: agentState } = useCoAgent<ResearchAgentState>({
     name: "studybuddy_agent",
   });
 
   console.log("AGENT_STATE", agentState);
 
   const steps =
-    agentState?.steps?.map((step: any) => {
+    agentState?.steps?.map((step) => {
       return {
         description: step.description || "",
         status: step.status || "pending",
@@ -25,7 +44,9 @@ export function ResultsView() {
       };
     }) || [];
 
-  const isLoading = !agentState?.answer?.markdown;
+  const markdown = agentState?.answer?.markdown;
+  const references = agentState?.answer?.references ?? [];
+  const isLoading = !markdown;
 
   return (
     <motion.div
@@ -57,20 +78,20 @@ export function ResultsView() {
               {isLoading ? (
                 <SkeletonLoader />
               ) : (
-                <AnswerMarkdown markdown={agentState?.answer?.markdown} />
+                <AnswerMarkdown markdown={markdown ?? ""} />
               )}
             </div>
           </div>
 
-          {agentState?.answer?.references?.length && (
+          {references.length > 0 && (
             <div className="flex col-span-12 lg:col-span-4 flex-col gap-y-4 w-[200px]">
               <h2 className="flex items-center gap-x-2">
                 <BookOpenIcon className="w-4 h-4 text-indigo-300" />
                 References
               </h2>
               <ul className=" font-light text-sm flex flex-col gap-y-2">
-                {agentState?.answer?.references?.map(
-                  (ref: any, idx: number) => (
+                {references.map(
+                  (ref, idx) => (
                     <li key={idx}>
                       <a
                         href={ref.url}

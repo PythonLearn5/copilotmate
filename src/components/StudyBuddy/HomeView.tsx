@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { CornerDownLeftIcon } from "lucide-react";
 import { useResearchContext } from "@/lib/research-provider";
 import { motion } from "framer-motion";
-import { useCopilotChat } from "@copilotkit/react-core";
-import { Role, TextMessage } from "@copilotkit/runtime-client-gql";
 import { useCoAgent } from "@copilotkit/react-core";
 
 const MAX_INPUT_LENGTH = 250;
@@ -92,15 +90,16 @@ export function HomeView() {
       </div>
       <div className="grid grid-cols-1 w-full gap-6 my-5 px-20 text-sm">
         {suggestions.map((suggestion) => (
-          <div
+          <button
+            type="button"
             key={suggestion.label}
             onClick={() => handleResearch(suggestion.label)}
-            className="p-2 text-xl bg-transparent rounded-md border-2 border-indigo-300 col-span-2 lg:col-span-1 flex cursor-pointer items-center space-x-2 hover:border-purple-500 hover:border-2 hover:shadow-lg hover:shadow-purple-500 transition-all hover:scale-105 duration-300"
+            className="p-2 text-xl bg-transparent rounded-md border-2 border-indigo-300 col-span-2 lg:col-span-1 flex cursor-pointer items-center space-x-2 hover:border-purple-500 hover:border-2 hover:shadow-lg hover:shadow-purple-500 transition-all hover:scale-105 duration-300 focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950"
 
           >
             <span className="text-base">{suggestion.icon}</span>
             <span className="flex-1">{suggestion.label}</span>
-          </div>
+          </button>
         ))}
       </div>
     </motion.div>

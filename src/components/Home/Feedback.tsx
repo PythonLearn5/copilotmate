@@ -41,7 +41,7 @@ const FeedbackSection = () => {
               key={feedback.id}
               className="bg-gradient-to-tr from-slate-800 via-transparent to-transparent backdrop-blur-lg border border-gray-600 rounded-lg p-4 transition-transform transform hover:scale-105 hover:border-slate-500"
             >
-              <p className="text-lg italic">"{feedback.text}"</p>
+              <p className="text-lg italic">&ldquo;{feedback.text}&rdquo;</p>
               <p className="mt-2 text-gray-300 text-right">
                 - {feedback.author}
               </p>

@@ -2,6 +2,9 @@
   "name": "copilotmate",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,9 +12,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@copilotkit/react-core": "^1.3.1",
-    "@copilotkit/react-textarea": "^1.3.2",
-    "@copilotkit/react-ui": "^1.3.1",
+    "@copilotkit/react-core": "^1.62.2",
+    "@copilotkit/react-textarea": "^1.62.2",
+    "@copilotkit/react-ui": "^1.62.2",
+    "@copilotkit/runtime": "^1.62.2",
+    "@copilotkit/runtime-client-gql": "^1.62.2",
     "@heroicons/react": "^2.1.5",
     "@radix-ui/react-slot": "^1.1.0",
     "@tabler/icons-react": "^3.17.0",

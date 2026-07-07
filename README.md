@@ -11,7 +11,7 @@
 CopilotMate is an open-source personal assistant designed to streamline productivity with an intuitive interface and a suite of essential tools. Whether you're organizing your tasks, tracking expenses, or studying efficiently, CopilotMate has your back! Built using **CopilotKit**, it integrates seamlessly to help you stay organized and focused.
 
 > **Note:**
-> Due to major updates in CoAgents and CopilotKit AI, the agent may not function as expected. Please review the latest changes before use. 
+> This project has been updated for modern CopilotKit packages. The Next.js app runs on Node.js 20+ and the StudyBuddy agent expects a Groq API key.
 
 
 ### 🛠️ Technologies Being Used  
@@ -83,9 +83,10 @@ CopilotMate currently supports the following features:
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v14 or later)
+- [Node.js](https://nodejs.org/) (v20 or later)
 - [Next.js](https://nextjs.org/)
 - [CopilotKit](https://docs.copilotkit.ai/what-is-copilotkit)
+- [Python](https://www.python.org/) 3.12 and [Poetry](https://python-poetry.org/) for the StudyBuddy agent
 
 ### Steps
 
@@ -109,6 +110,8 @@ Then, create a `.env` file inside `./agent` with the following:
 ```bash
 GROQ_API_KEY=...
 TAVILY_API_KEY=...
+# Optional, defaults to llama-3.3-70b-versatile
+GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
 Then, run the demo:
@@ -129,13 +132,23 @@ poetry run demo
    npm install
    ```
 
-4. Start the development server:
+4. Create a `.env.local` file for the Next.js runtime:
+
+   ```bash
+   GROQ_API_KEY=...
+   # Optional, defaults to http://127.0.0.1:8000/copilotkit
+   COPILOTKIT_REMOTE_ACTION_URL=http://127.0.0.1:8000/copilotkit
+   # Optional, defaults to llama-3.3-70b-versatile
+   GROQ_MODEL=llama-3.3-70b-versatile
+   ```
+
+5. Start the development server:
 
    ```bash
    npm run dev
    ```
 
-5. Open the app in your browser:
+6. Open the app in your browser:
 
    ```bash
    http://localhost:3000
@@ -149,11 +162,11 @@ Once installed, you can access the following features:
   
 - **Spreadsheet**: Access the spreadsheet at `/spreadsheet` to manage your data. Organize your records using rows and columns.
 
-- **Chatbot**: Go to `/chatbot` to interact with the AI-powered assistant for general queries and task automation.
+- **Chatbot**: Go to `/chat` to interact with the AI-powered assistant for general queries and task automation.
 
-- **Expense Tracker**: Visit `/expense-tracker` to start tracking your expenses. The improved dark UI will keep you focused on your financials with style.
+- **Expense Tracker**: Visit `/expensetracker` to start tracking your expenses. The improved dark UI will keep you focused on your financials with style.
 
-- **StudyBuddy Coagent**: Head over to `/studybuddy` for study tools that help you plan, create quizzes, and organize notes effectively.
+- **StudyBuddy Coagent**: Head over to `/study-buddy` for study tools that help you plan, create quizzes, and organize notes effectively.
 
 More routes and features are currently being developed.
 
@@ -171,5 +184,4 @@ Please refer to our [Contributing Guide](CONTRIBUTING.md) for more details.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 

@@ -113,7 +113,7 @@ const Main = () => {
         />
       );
     },
-    handler: ({ rows, title }) => {
+    handler: () => {
       // Do nothing.
       // The preview component will optionally handle committing the changes.
     },
