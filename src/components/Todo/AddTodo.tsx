@@ -16,6 +16,7 @@ export function AddTodo() {
     <form onSubmit={(e) => e.preventDefault()}>
       <div className="flex items-center mb-4">
         <Input
+          data-testid="todo-title-input"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           type="text"
@@ -23,6 +24,7 @@ export function AddTodo() {
           className="flex-1 mr-2 bg-muted text-white-300 rounded-md px-4 py-2 bg-neutral-800 border-none"
         />
         <Button
+          data-testid="todo-add-button"
           type="submit"
           disabled={!title}
           onClick={handleAddTask}

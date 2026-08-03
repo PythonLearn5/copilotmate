@@ -170,6 +170,48 @@ Once installed, you can access the following features:
 
 More routes and features are currently being developed.
 
+## Selenium and BrowserStack testing
+
+CopilotMate includes a TypeScript Selenium suite for the Todo feature. It covers
+adding, completing, prioritizing, and deleting tasks. Tests run either in local
+Chrome or on BrowserStack Automate across the browser matrix defined in
+`.github/workflows/browserstack-selenium.yml`.
+
+### Run locally
+
+Start the application in one terminal:
+
+```bash
+npm run dev
+```
+
+Run the tests in another terminal:
+
+```bash
+npm run test:e2e
+```
+
+Chrome runs headlessly by default. Use `HEADLESS=false npm run test:e2e` to
+watch the browser, or set `E2E_BASE_URL` to test another environment.
+
+### Run on BrowserStack
+
+1. Create a BrowserStack account and obtain the username and access key.
+2. Add `BROWSERSTACK_USERNAME` and `BROWSERSTACK_ACCESS_KEY` as GitHub Actions
+   repository secrets.
+3. Run the **BrowserStack Selenium** workflow manually, push to `main`, or open
+   a pull request from a branch with access to those secrets.
+
+The workflow builds and starts the application, establishes BrowserStack Local,
+and executes sequential sessions on Chrome/Windows 11, Firefox/Windows 11, and
+Safari/macOS Sonoma. Sequential execution keeps the example compatible with
+accounts that have limited parallel capacity. Pull requests without repository
+secrets report that the credential-gated cloud run was skipped.
+
+For the evaluation architecture, troubleshooting table, presentation script,
+and interview talking points, see
+[BrowserStack Customer Engineering Demo](docs/browserstack-customer-engineering-demo.md).
+
 ## Contributing
 
 We welcome contributions from the community! To get started:
@@ -184,4 +226,3 @@ Please refer to our [Contributing Guide](CONTRIBUTING.md) for more details.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-

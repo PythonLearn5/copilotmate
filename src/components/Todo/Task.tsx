@@ -23,6 +23,7 @@ export function Task({
 
   return (
     <motion.div
+      data-testid="todo-task"
       key={`${id}_${status}`}
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -42,6 +43,7 @@ export function Task({
       />
       <div className="text-sm text-neutral-500 font-medium">TASK-{id}</div>
       <Label
+        data-testid="todo-task-title"
         htmlFor={`task_${id}`}
         className={cn(
           "flex-1 text-sm text-muted-foreground",
@@ -53,6 +55,8 @@ export function Task({
 
       {/* Priority Dropdown */}
       <select
+        data-testid="todo-task-priority"
+        aria-label={`Priority for ${title}`}
         value={priority}
         onChange={(e) => setTaskPriority(id, e.target.value as TaskPriority)}
         className={cn(
@@ -69,7 +73,13 @@ export function Task({
         ))}
       </select>
 
-      <Button variant="ghost" size="sm" onClick={() => deleteTask(id)}>
+      <Button
+        data-testid="todo-task-delete"
+        aria-label={`Delete ${title}`}
+        variant="ghost"
+        size="sm"
+        onClick={() => deleteTask(id)}
+      >
         <div className="text-red-500 hover:text-white hover:bg-red-500 m-1 p-1 rounded-lg">
           <TrashIcon className="w-5 h-5" />
         </div>
