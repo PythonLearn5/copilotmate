@@ -1,14 +1,13 @@
 import {
   CopilotRuntime,
-  GroqAdapter,
+  OpenAIAdapter,
   copilotRuntimeNextJSAppRouterEndpoint,
 } from "@copilotkit/runtime";
 import { NextRequest } from "next/server";
-import { Groq } from "groq-sdk";
+import OpenAI from "openai";
 
 const remoteActionUrl =
   process.env.COPILOTKIT_REMOTE_ACTION_URL ?? "http://127.0.0.1:8000/copilotkit";
-const groqModel = process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile";
 
 const runtime = new CopilotRuntime({
   remoteActions: [
@@ -21,21 +20,26 @@ const runtime = new CopilotRuntime({
 export const dynamic = "force-dynamic";
 
 export const POST = async (req: NextRequest) => {
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = process.env.AI_GATEWAY_API_KEY;
 
   if (!apiKey) {
     return Response.json(
       {
         error:
-          "GROQ_API_KEY is required to use the CopilotKit runtime endpoint.",
+          "AI_GATEWAY_API_KEY is required to use the CopilotKit runtime endpoint.",
       },
       { status: 500 }
     );
   }
 
-  const serviceAdapter = new GroqAdapter({
-    groq: new Groq({ apiKey }),
-    model: groqModel,
+  const openai = new OpenAI({
+    apiKey,
+    baseURL: "https://ai-gateway.vercel.sh/v1",
+  });
+
+  const serviceAdapter = new OpenAIAdapter({
+    openai,
+    model: "openai/gpt-4o",
   });
 
   const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
