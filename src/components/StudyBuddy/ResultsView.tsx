@@ -4,7 +4,7 @@ import { useResearchContext } from "@/lib/research-provider";
 import { motion } from "framer-motion";
 import { BookOpenIcon, LoaderCircleIcon, SparkleIcon } from "lucide-react";
 import { SkeletonLoader } from "./SkeletonLoader";
-import { useCoAgent } from "@copilotkit/react-core";
+import { useAgent } from "@copilotkit/react-core/v2";
 import { Progress } from "./Progress";
 import { AnswerMarkdown } from "./AnswerMarkdown";
 
@@ -29,9 +29,10 @@ type ResearchAgentState = {
 
 export function ResultsView() {
   const { researchQuery } = useResearchContext();
-  const { state: agentState } = useCoAgent<ResearchAgentState>({
-    name: "studybuddy_agent",
+  const { agent } = useAgent({
+    agentId: "studybuddy_agent",
   });
+  const agentState = agent.state as ResearchAgentState;
 
   console.log("AGENT_STATE", agentState);
 

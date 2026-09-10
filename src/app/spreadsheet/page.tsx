@@ -1,22 +1,17 @@
 "use client";
-import "@copilotkit/react-ui/styles.css";
 
 import React, { useState } from "react";
 import Sidebar from "@/components/Spreadsheet/Sidebar";
 import SingleSpreadsheet from "@/components/Spreadsheet/SingleSpreadsheet";
-import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import {
-  CopilotKitCSSProperties,
-  CopilotSidebar,
-  useCopilotChatSuggestions,
-} from "@copilotkit/react-ui";
-import { INSTRUCTIONS } from "./instructions";
+import { useFrontendTool, useAgentContext, useConfigureSuggestions, CopilotSidebar } from "@copilotkit/react-core/v2";
+import type { CSSProperties } from "react";
+import { z } from "zod";
 import { canonicalSpreadsheetData } from "@/components/Spreadsheet/canonicalSpreadsheetData";
 import { SpreadsheetData } from "@/components/Spreadsheet/type";
 import { PreviewSpreadsheetChanges } from "@/components/Spreadsheet/PreviewSpreadsheetChanges";
 
 const HomePage = () => {
-  useCopilotChatSuggestions(
+  useConfigureSuggestions(
     {
       instructions: "Suggest the most relevant actions related to spreadsheet.",
     },
@@ -31,20 +26,17 @@ const HomePage = () => {
           "--copilot-kit-response-button-color": "#fff",
           "--copilot-kit-separator-color": "#666666",
           "--copilot-kit-muted-color": "#fff",
-        } as CopilotKitCSSProperties
+        } as CSSProperties
       }
     >
       <CopilotSidebar
-        instructions={INSTRUCTIONS}
         labels={{
-          title: "CopilotMate",
-          initial:
+          welcomeMessageText:
             "Welcome to the AI-assisted spreadsheet! How can I help you?",
         }}
         defaultOpen={true}
-        clickOutsideToClose={false}
       >
-        <Main />
+        {() => <Main />}
       </CopilotSidebar>
     </div>
   );
@@ -64,37 +56,19 @@ const Main = () => {
 
   const [selectedSpreadsheetIndex, setSelectedSpreadsheetIndex] = useState(0);
 
-  useCopilotAction({
+  useFrontendTool({
     name: "createSpreadsheet",
     description: "Create a new  spreadsheet",
-    parameters: [
-      {
-        name: "rows",
-        type: "object[]",
-        description: "The rows of the spreadsheet",
-        attributes: [
-          {
-            name: "cells",
-            type: "object[]",
-            description: "The cells of the row",
-            attributes: [
-              {
-                name: "value",
-                type: "string",
-                description: "The value of the cell",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: "title",
-        type: "string",
-        description: "The title of the spreadsheet",
-      },
-    ],
+    parameters: z.object({
+      rows: z.array(z.object({
+        cells: z.array(z.object({
+          value: z.string().describe("The value of the cell"),
+        })).describe("The cells of the row"),
+      })).describe("The rows of the spreadsheet"),
+      title: z.string().describe("The title of the spreadsheet").optional(),
+    }),
     render: (props) => {
-      const { rows, title } = props.args;
+      const { rows, title } = props.args as { rows: { cells: { value: string }[] }[]; title?: string };
       const newRows = canonicalSpreadsheetData(rows);
 
       return (
@@ -113,13 +87,13 @@ const Main = () => {
         />
       );
     },
-    handler: () => {
+    handler: async () => {
       // Do nothing.
       // The preview component will optionally handle committing the changes.
     },
   });
 
-  useCopilotReadable({
+  useAgentContext({
     description: "Today's date",
     value: new Date().toLocaleDateString(),
   });

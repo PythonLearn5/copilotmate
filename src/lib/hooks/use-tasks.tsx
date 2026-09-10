@@ -1,8 +1,9 @@
 "use client"
-import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
+import { useFrontendTool, useAgentContext } from "@copilotkit/react-core/v2";
+import { z } from "zod";
 import { createContext, useContext, useState, ReactNode } from "react";
 import { defaultTasks } from "../default-tasks";
-import { Task, TaskStatus, TaskPriority } from "../tasks.types"; // Import TaskPriority
+import { Task, TaskStatus, TaskPriority } from "../tasks.types";
 
 let nextId = defaultTasks.length + 1;
 
@@ -19,103 +20,65 @@ const TasksContext = createContext<TasksContextType | undefined>(undefined);
 export const TasksProvider = ({ children }: { children: ReactNode }) => {
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
 
-  useCopilotReadable({
+  useAgentContext({
     description: "The state of the todo list",
-    value: tasks,
+    value: JSON.stringify(tasks),
   });
 
-  useCopilotAction({
+  useFrontendTool({
     name: "addTask",
     description: "Adds a task to the todo list",
-    parameters: [
-      {
-        name: "title",
-        type: "string",
-        description: "The title of the task",
-        required: true,
-      },
-      {
-        name: "priority", // Add priority parameter
-        type: "string",
-        description: "The priority of the task",
-        enum: Object.values(TaskPriority), // Ensure it uses enum values
-        required: false, // Optional parameter
-      },
-    ],
+    parameters: z.object({
+      title: z.string().describe("The title of the task"),
+      priority: z.enum(Object.values(TaskPriority) as [string, ...string[]]).describe("The priority of the task").optional(),
+    }),
     handler: async ({ title, priority }) => {
-      addTask(title, priority || TaskPriority.medium); // Default priority to medium if not provided
+      addTask(title, (priority as TaskPriority) || TaskPriority.medium);
       return "Task added successfully";
     },
-    render: "Processing..."
+    render: () => "Processing..."
   });
 
-  useCopilotAction({
+  useFrontendTool({
     name: "deleteTask",
     description: "Deletes a task from the todo list",
-    parameters: [
-      {
-        name: "id",
-        type: "number",
-        description: "The id of the task to delete",
-        required: true,
-      },
-    ],
+    parameters: z.object({
+      id: z.number().describe("The id of the task to delete"),
+    }),
     handler: async ({ id }) => {
       deleteTask(id);
       return "Task deleted successfully";
     },
-    render: "Processing..."
+    render: () => "Processing..."
   });
 
-  useCopilotAction({
+  useFrontendTool({
     name: "setTaskStatus",
     description: "Sets the status of a task",
-    parameters: [
-      {
-        name: "id",
-        type: "number",
-        description: "The id of the task",
-        required: true,
-      },
-      {
-        name: "status",
-        type: "string",
-        description: "The status of the task",
-        enum: Object.values(TaskStatus),
-        required: true,
-      },
-    ],
+    parameters: z.object({
+      id: z.number().describe("The id of the task"),
+      status: z.enum(Object.values(TaskStatus) as [string, ...string[]]).describe("The status of the task"),
+    }),
     handler: async ({ id, status }) => {
-      setTaskStatus(id, status);
+      setTaskStatus(id, status as TaskStatus);
       return "Set status successful";
     },
-    render: "Processing..."
+    render: () => "Processing..."
   });
 
   // New Action to Update Task Priority
-  useCopilotAction({
+  useFrontendTool({
     name: "setTaskPriority",
     description: "Sets the priority of a task",
-    parameters: [
-      {
-        name: "id",
-        type: "number",
-        description: "The id of the task",
-        required: true,
-      },
-      {
-        name: "priority",
-        type: "string",
-        description: "The priority of the task",
-        enum: Object.values(TaskPriority), // Use the TaskPriority enum
-        required: true,
-      },
-    ],
+    parameters: z.object({
+      id: z.number().describe("The id of the task"),
+      priority: z.enum(Object.values(TaskPriority) as [string, ...string[]]).describe("The priority of the task"),
+    }),
     handler: async ({ id, priority }) => {
-      setTaskPriority(id, priority);
+      setTaskPriority(id, priority as TaskPriority);
       return "Task priority updated successfully";
     },
-    render: "Processing..."
+    render: () => "Processing..."
   });
 
   const addTask = (title: string, priority: TaskPriority = TaskPriority.medium) => {

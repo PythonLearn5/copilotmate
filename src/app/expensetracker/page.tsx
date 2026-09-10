@@ -2,13 +2,12 @@
 import { useState, ChangeEvent } from "react";
 import { TrashIcon } from "lucide-react";
 import {
-  CopilotKitCSSProperties,
   CopilotPopup,
-  useCopilotChatSuggestions,
-} from "@copilotkit/react-ui";
-import "@copilotkit/react-ui/styles.css";
-import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { INSTRUCTIONS } from "./instructions";
+  useConfigureSuggestions,
+} from "@copilotkit/react-core/v2";
+import { useFrontendTool, useAgentContext } from "@copilotkit/react-core/v2";
+import type { CSSProperties } from "react";
+import { z } from "zod";
 
 // Define the expense type
 interface Expense {
@@ -161,17 +160,16 @@ export default function ExpenseTracker() {
   });
 
   // Copilot Readable
-  useCopilotReadable({
+  useAgentContext({
     description: "List of user expenses",
     value: JSON.stringify(expenses),
   });
 
-  useCopilotChatSuggestions({
+  useConfigureSuggestions({
     instructions: `
     Suggest the most relevant actions related to expenses like total expense, average expense, max expense and min expense.
   `,
-  }
-  );
+  });
   // Add Expense Function
   const handleAddExpense = () => {
     const { name, amount, date } = newExpense;
@@ -195,30 +193,15 @@ export default function ExpenseTracker() {
   };
 
   // Copilot Actions
-  useCopilotAction({
+  useFrontendTool({
     name: "addExpense",
     description: "Adds an expense to the expense list",
-    parameters: [
-      {
-        name: "name",
-        type: "string",
-        description: "The name of the expense",
-        required: true,
-      },
-      {
-        name: "amount",
-        type: "number",
-        description: "The amount of the expense",
-        required: true,
-      },
-      {
-        name: "date",
-        type: "string", // Date in string format (ISO, e.g. "2024-10-04")
-        description: "The date of the expense",
-        required: true,
-      },
-    ],
-    handler: ({ name, amount, date }) => {
+    parameters: z.object({
+      name: z.string().describe("The name of the expense"),
+      amount: z.number().describe("The amount of the expense"),
+      date: z.string().describe("The date of the expense"),
+    }),
+    handler: async ({ name, amount, date }) => {
       const parsedAmount = Number(amount);
 
       if (!isNaN(parsedAmount)) {
@@ -237,18 +220,13 @@ export default function ExpenseTracker() {
     },
   });
 
-  useCopilotAction({
+  useFrontendTool({
     name: "deleteExpense",
     description: "Deletes an expense from the expense list",
-    parameters: [
-      {
-        name: "id",
-        type: "number",
-        description: "The ID of the expense to delete",
-        required: true,
-      },
-    ],
-    handler: ({ id }) => {
+    parameters: z.object({
+      id: z.number().describe("The ID of the expense to delete"),
+    }),
+    handler: async ({ id }) => {
       deleteExpense(id);
     },
   });
@@ -301,14 +279,12 @@ export default function ExpenseTracker() {
             "--copilot-kit-response-button-color": "#fff",
             "--copilot-kit-separator-color": "#666666",
             "--copilot-kit-muted-color": "#fff",
-          } as CopilotKitCSSProperties
+          } as CSSProperties
         }
       >
         <CopilotPopup
-          instructions={INSTRUCTIONS}
           labels={{
-            title: "CopilotMate : Expense Tracker",
-            initial:
+            welcomeMessageText:
               "Welcome to the AI-assisted Expense Tracker! How can I help you?",
           }}
         />

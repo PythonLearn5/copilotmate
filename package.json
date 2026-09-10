@@ -14,11 +14,9 @@
     "test:e2e:browserstack": "cross-env SELENIUM_REMOTE=browserstack mocha --import=tsx --timeout 120000 \"tests/e2e/**/*.spec.ts\""
   },
   "dependencies": {
-    "@copilotkit/react-core": "^1.62.2",
-    "@copilotkit/react-textarea": "^1.62.2",
-    "@copilotkit/react-ui": "^1.62.2",
-    "@copilotkit/runtime": "^1.62.2",
-    "@copilotkit/runtime-client-gql": "^1.62.2",
+    "@copilotkit/react-core": "^1.71.0",
+    "@copilotkit/react-ui": "^1.71.0",
+    "@copilotkit/runtime": "^1.71.0",
     "@heroicons/react": "^2.1.5",
     "@radix-ui/react-slot": "^1.1.0",
     "@tabler/icons-react": "^3.17.0",
@@ -33,7 +31,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-spreadsheet": "^0.9.5",
-    "tailwind-merge": "^2.5.2"
+    "tailwind-merge": "^2.5.2",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/chai": "^5.2.3",

@@ -3,7 +3,7 @@ import "./globals.css";
 import { FloatingDockDemo } from "@/components/Home/FloatingDock";
 import Footer from "@/components/Home/Footer";
 import Header from "@/components/Home/Header";
-import { CopilotKit } from "@copilotkit/react-core";
+import { CopilotKitProvider } from "@/components/CopilotKitProvider";
 import { Spotlight } from "@/components/ui/Spotlight";
 
 export const metadata: Metadata = {
@@ -19,6 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="stylesheet" href="/copilotkit-v2.css" />
+      </head>
       <body>
         <Spotlight
           className="-top-40 -left-10 md:-left-32 md:-top-20 h-screen"
@@ -26,12 +29,12 @@ export default function RootLayout({
         />
         <Spotlight className="top-28 left-80 h-[80vh] " fill="#a855f7" />
         <Spotlight className="-top-20 left-1/2 h-screen" fill="purple" />
-        <CopilotKit runtimeUrl="/api/copilotkit">
+        <CopilotKitProvider runtimeUrl="/api/copilotkit">
           <Header />
           {children}
           <FloatingDockDemo />
           <Footer />
-        </CopilotKit>
+        </CopilotKitProvider>
       </body>
     </html>
   );

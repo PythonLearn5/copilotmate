@@ -1,4 +1,5 @@
-import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
+import { useFrontendTool, useAgentContext } from "@copilotkit/react-core/v2";
+import { z } from "zod";
 import React from "react";
 import Spreadsheet, { Matrix } from "react-spreadsheet";
 import { canonicalSpreadsheetData } from "./canonicalSpreadsheetData";
@@ -11,43 +12,24 @@ interface MainAreaProps {
 }
 
 const SingleSpreadsheet = ({ spreadsheet, setSpreadsheet }: MainAreaProps) => {
-  useCopilotReadable({
+  useAgentContext({
     description: "The current spreadsheet",
-    value: spreadsheet,
+    value: JSON.stringify(spreadsheet),
   });
 
-  useCopilotAction({
+  useFrontendTool({
     name: "suggestSpreadsheetOverride",
     description: "Suggest an override of the current spreadsheet",
-    parameters: [
-      {
-        name: "rows",
-        type: "object[]",
-        description: "The rows of the spreadsheet",
-        attributes: [
-          {
-            name: "cells",
-            type: "object[]",
-            description: "The cells of the row",
-            attributes: [
-              {
-                name: "value",
-                type: "string",
-                description: "The value of the cell",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: "title",
-        type: "string",
-        description: "The title of the spreadsheet",
-        required: false,
-      },
-    ],
+    parameters: z.object({
+      rows: z.array(z.object({
+        cells: z.array(z.object({
+          value: z.string().describe("The value of the cell"),
+        })).describe("The cells of the row"),
+      })).describe("The rows of the spreadsheet"),
+      title: z.string().describe("The title of the spreadsheet").optional(),
+    }),
     render: (props) => {
-      const { rows } = props.args;
+      const { rows } = props.args as { rows: { cells: { value: string }[] }[] };
       const newRows = canonicalSpreadsheetData(rows);
 
       return (
@@ -65,39 +47,25 @@ const SingleSpreadsheet = ({ spreadsheet, setSpreadsheet }: MainAreaProps) => {
         />
       );
     },
-    handler: () => {
+    handler: async () => {
       // Do nothing.
       // The preview component will optionally handle committing the changes.
     },
   });
 
-  useCopilotAction({
+  useFrontendTool({
     name: "appendToSpreadsheet",
     description: "Append rows to the current spreadsheet",
-    parameters: [
-      {
-        name: "rows",
-        type: "object[]",
-        description: "The new rows of the spreadsheet",
-        attributes: [
-          {
-            name: "cells",
-            type: "object[]",
-            description: "The cells of the row",
-            attributes: [
-              {
-                name: "value",
-                type: "string",
-                description: "The value of the cell",
-              },
-            ],
-          },
-        ],
-      },
-    ],
+    parameters: z.object({
+      rows: z.array(z.object({
+        cells: z.array(z.object({
+          value: z.string().describe("The value of the cell"),
+        })).describe("The cells of the row"),
+      })).describe("The new rows of the spreadsheet"),
+    }),
     render: (props) => {
       const status = props.status;
-      const { rows } = props.args;
+      const { rows } = props.args as { rows: { cells: { value: string }[] }[] };
       const newRows = canonicalSpreadsheetData(rows);
       return (
         <div>
@@ -106,7 +74,7 @@ const SingleSpreadsheet = ({ spreadsheet, setSpreadsheet }: MainAreaProps) => {
         </div>
       );
     },
-    handler: ({ rows }) => {
+    handler: async ({ rows }: { rows: { cells: { value: string }[] }[] }) => {
       const canonicalRows = canonicalSpreadsheetData(rows);
       const updatedSpreadsheet: SpreadsheetData = {
         title: spreadsheet.title,

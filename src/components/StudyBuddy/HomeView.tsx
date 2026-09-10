@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { CornerDownLeftIcon } from "lucide-react";
 import { useResearchContext } from "@/lib/research-provider";
 import { motion } from "framer-motion";
-import { useCoAgent } from "@copilotkit/react-core";
+import { useAgent } from "@copilotkit/react-core/v2";
 
 const MAX_INPUT_LENGTH = 250;
 
@@ -15,13 +15,18 @@ export function HomeView() {
   const { setResearchQuery, researchInput, setResearchInput } =
     useResearchContext();
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const { run: runResearchAgent } = useCoAgent({
-    name: "studybuddy_agent",
+  const { agent: researchAgent } = useAgent({
+    agentId: "studybuddy_agent",
   });
 
   const handleResearch = (query: string) => {
     setResearchQuery(query);
-    runResearchAgent(query);
+    researchAgent.addMessage({
+      id: crypto.randomUUID(),
+      role: "user",
+      content: query,
+    });
+    researchAgent.runAgent();
   };
 
   const suggestions = [
