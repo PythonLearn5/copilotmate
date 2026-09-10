@@ -14,6 +14,8 @@
     "test:e2e:browserstack": "cross-env SELENIUM_REMOTE=browserstack mocha --import=tsx --timeout 120000 \"tests/e2e/**/*.spec.ts\""
   },
   "dependencies": {
+    "@ag-ui/client": "^0.0.57",
+    "@ai-sdk/gateway": "^3.0.144",
     "@copilotkit/react-core": "^1.71.0",
     "@copilotkit/react-ui": "^1.71.0",
     "@copilotkit/runtime": "^1.71.0",
@@ -26,7 +28,6 @@
     "framer-motion": "^11.7.0",
     "lucide-react": "^0.446.0",
     "next": "14.2.13",
-    "openai": "^4.85.1",
     "radix-ui": "^1.0.1",
     "react": "^18",
     "react-dom": "^18",

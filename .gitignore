@@ -36,7 +36,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-docs
 /.idea/
 /agent/poetry.lock
 /yarn.lock
