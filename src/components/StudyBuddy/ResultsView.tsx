@@ -2,9 +2,10 @@
 
 import { useResearchContext } from "@/lib/research-provider";
 import { motion } from "framer-motion";
-import { BookOpenIcon, LoaderCircleIcon, SparkleIcon } from "lucide-react";
+import { BookOpenIcon, LoaderCircleIcon, SparkleIcon, AlertCircleIcon } from "lucide-react";
 import { SkeletonLoader } from "./SkeletonLoader";
 import { useAgent } from "@copilotkit/react-core/v2";
+import { useEffect, useState } from "react";
 import { Progress } from "./Progress";
 import { AnswerMarkdown } from "./AnswerMarkdown";
 
@@ -29,12 +30,27 @@ type ResearchAgentState = {
 
 export function ResultsView() {
   const { researchQuery } = useResearchContext();
-  const { agent } = useAgent({
+  const { agent, isReady } = useAgent({
     agentId: "studybuddy_agent",
   });
   const agentState = agent.state as ResearchAgentState;
+  const [error, setError] = useState<string | null>(null);
 
-  console.log("AGENT_STATE", agentState);
+  useEffect(() => {
+    setError(null);
+    // Subscribe to agent run failures to surface errors instead of infinite loading
+    const subscription = agent.subscribe({
+      onRunFailed: ({ error: err }: { error: Error }) => {
+        setError(err.message || "Agent run failed");
+      },
+      onRunErrorEvent: ({ event }: { event: { message?: string } }) => {
+        setError(event.message || "Agent run error");
+      },
+    });
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [agent]);
 
   const steps =
     agentState?.steps?.map((step) => {
@@ -47,7 +63,9 @@ export function ResultsView() {
 
   const markdown = agentState?.answer?.markdown;
   const references = agentState?.answer?.references ?? [];
-  const isLoading = !markdown;
+
+  const showLoading = !markdown && !error;
+  const showNotReady = !isReady && !error && !markdown;
 
   return (
     <motion.div
@@ -68,15 +86,37 @@ export function ResultsView() {
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-12 lg:col-span-8 flex flex-col">
             <h2 className="flex items-center gap-x-2">
-              {isLoading ? (
+              {showLoading || showNotReady ? (
                 <LoaderCircleIcon className="animate-spin w-4 h-4 text-pink-400" />
+              ) : error ? (
+                <AlertCircleIcon className="w-4 h-4 text-red-400" />
               ) : (
                 <SparkleIcon className="w-4 h-4 text-purple-400" />
               )}
               Search Result
             </h2>
             <div className="text-neutral-500">
-              {isLoading ? (
+              {error ? (
+                <div className="flex flex-col gap-y-4 py-4">
+                  <p className="text-red-400 text-sm">{error}</p>
+                  <p className="text-neutral-600 text-xs">
+                    Make sure the Python agent backend is running:
+                    <code className="ml-2 px-2 py-1 rounded bg-neutral-900 text-neutral-300">
+                      cd agent && poetry run demo
+                    </code>
+                  </p>
+                  <button
+                    className="w-fit px-4 py-2 rounded-lg bg-neutral-800 text-neutral-300 hover:bg-neutral-700 transition-colors text-sm"
+                    onClick={() => window.location.reload()}
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : showNotReady ? (
+                <p className="text-neutral-600 text-sm py-4">
+                  Connecting to agent...
+                </p>
+              ) : showLoading ? (
                 <SkeletonLoader />
               ) : (
                 <AnswerMarkdown markdown={markdown ?? ""} />

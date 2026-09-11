@@ -26,18 +26,18 @@ requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.poetry.dependencies]
-python = "^3.12"
-langgraph = "^0.2.34"
-langchain-core = "^0.3.8"
-langchain-openai = "^0.2.1"
-langchain = "^0.3.1"
-openai = "^1.51.0"
-langchain-community = "^0.3.1"
+python = ">=3.12,<3.15"
+langgraph = "^1.2.0"
+langchain-core = "^1.6.0"
+langchain-openai = "^1.6.0"
+langchain = "^1.4.0"
+openai = "^3.0.0"
+langchain-community = "^0.4.0"
 tavily-python = "^0.5.0"
-copilotkit = "0.1.18"
+copilotkit = "^0.1.96"
 python-dotenv = "^1.0.1"
 uvicorn = "^0.31.0"
-langchain-anthropic = "^0.2.1"
+langchain-anthropic = "^1.7.0"
 
 
 [tool.poetry.scripts]
